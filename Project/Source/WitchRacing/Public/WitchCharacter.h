@@ -15,7 +15,7 @@ public:
 	// Sets default values for this character's properties
 	AWitchCharacter();
 
-	float FullMagicPoint = 1000.0f;
+	float FullMagicPoint = 100.0f;
 	float MagicPointPercentage = 1.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MagicPoint")
@@ -35,6 +35,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Timer")
 		int GoalTime;
+
+	UFUNCTION(Category = "Movement")
+		void MoveModeChange();
 
 protected:
 	// Called when the game starts or when spawned
@@ -61,8 +64,6 @@ protected:
 
 	void StartJump();
 	void StopJump();
-
-	void MoveModeChange();
 
 	void MainCamera();
 	void SubCamera();

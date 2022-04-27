@@ -26,6 +26,7 @@ AWitchCharacter::AWitchCharacter()
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
+	GetCharacterMovement()->MaxWalkSpeed = 900.0f;
 	GetCharacterMovement()->JumpZVelocity = 600.0f;
 	GetCharacterMovement()->AirControl = 1.0f;
 
@@ -53,12 +54,26 @@ void AWitchCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	MagicPoint = 100.0f;
+	CheckPointCount = 0;
 }
 
 // Called every frame
 void AWitchCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (GetCharacterMovement()->IsFlying())
+	{
+		if (0.0f < MagicPoint)
+		{
+			UpdateMagicPoint(-5.0f * DeltaTime);
+		}
+		else
+		{
+			MoveModeChange();
+		}
+	}
 
 }
 
@@ -85,9 +100,9 @@ void AWitchCharacter::MoveForward(float Value)
 	if ((Controller != nullptr) && (Value != 0.0f))
 	{
 		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		const FRotator CharacterRotation(Rotation.Pitch, Rotation.Yaw, 0);
 
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		const FVector Direction = FRotationMatrix(CharacterRotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(Direction, Value);
 	}
 }
@@ -97,9 +112,9 @@ void AWitchCharacter::MoveRight(float Value)
 	if ((Controller != nullptr) && (Value != 0.0f))
 	{
 		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		const FRotator CharacterRotation(Rotation.Pitch, Rotation.Yaw, 0);
 
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		const FVector Direction = FRotationMatrix(CharacterRotation).GetUnitAxis(EAxis::Y);
 		AddMovementInput(Direction, Value);
 	}
 }
@@ -125,9 +140,10 @@ void AWitchCharacter::UpdateMagicPoint(float ChangeMagicPoint)
 	MagicPoint += ChangeMagicPoint;
 	MagicPoint = FMath::Clamp(MagicPoint, 0.0f, FullMagicPoint);
 	MagicPointPercentage = MagicPoint / FullMagicPoint;
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("HP : %f"), MagicPoint));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("HP : %f"), MagicPoint));
 }
 
+//Camera Change
 void AWitchCharacter::MainCamera()
 {
 	SpringArmComp->TargetArmLength = 250.0f;
@@ -138,4 +154,20 @@ void AWitchCharacter::SubCamera()
 {
 	SpringArmComp->TargetArmLength = -250.0f;
 	CameraComp->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));
+}
+
+void AWitchCharacter::MoveModeChange()
+{
+	if (GetCharacterMovement()->IsFlying())
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+
+		bUseControllerRotationPitch = false;
+	}
+	else if(GetCharacterMovement()->IsFalling() || GetCharacterMovement()->IsWalking())
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+
+		bUseControllerRotationPitch = true;
+	}
 }

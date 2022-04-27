@@ -20,15 +20,21 @@ public:
 	virtual void BeginPlay() override;
 
 protected:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Timer")
 		TSubclassOf<class UUserWidget> InGameTimeClass;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Timer")
 		class UUserWidget* TimeCurrentWidget;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "StartTimer")
 		TSubclassOf<class UUserWidget> StartCountClass;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "StartTimer")
 		class UUserWidget* StartCountCurrentWidget;
+
+	UPROPERTY(EditAnywhere, Category = "MagicPoint")
+		TSubclassOf<class UUserWidget> MagicPointClass;
+
+	UPROPERTY(EditAnywhere, Category = "MagicPoint")
+		class UUserWidget* MagicPointCurrentWidget;
 };
