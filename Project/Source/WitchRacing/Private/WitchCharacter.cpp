@@ -5,6 +5,10 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "UI/InGameMainHUD.h"
+#include "Kismet/GameplayStatics.h"
+
 
 // Sets default values
 AWitchCharacter::AWitchCharacter()
@@ -27,6 +31,7 @@ AWitchCharacter::AWitchCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
 	GetCharacterMovement()->MaxWalkSpeed = 900.0f;
+	GetCharacterMovement()->MaxFlySpeed = 900.0f;
 	GetCharacterMovement()->JumpZVelocity = 600.0f;
 	GetCharacterMovement()->AirControl = 1.0f;
 
@@ -47,6 +52,7 @@ AWitchCharacter::AWitchCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	
 }
 
 // Called when the game starts or when spawned
@@ -56,6 +62,9 @@ void AWitchCharacter::BeginPlay()
 	
 	MagicPoint = 100.0f;
 	CheckPointCount = 0;
+
+	CharacterFlying = false;
+	bCanMoveChange = true;
 }
 
 // Called every frame
@@ -63,16 +72,13 @@ void AWitchCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (GetCharacterMovement()->IsFlying())
+	if (CharacterFlying)
 	{
-		if (0.0f < MagicPoint)
+		if (MagicPoint == 0.0f)
 		{
-			UpdateMagicPoint(-5.0f * DeltaTime);
+			RunningChange();
 		}
-		else
-		{
-			MoveModeChange();
-		}
+		UpdateMagicPoint(-5.0f * DeltaTime);
 	}
 
 }
@@ -93,6 +99,8 @@ void AWitchCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 	PlayerInputComponent->BindAction("BackMirror", IE_Pressed, this, &AWitchCharacter::SubCamera);
 	PlayerInputComponent->BindAction("BackMirror", IE_Released, this, &AWitchCharacter::MainCamera);
+
+	PlayerInputComponent->BindAction("Fly", IE_Pressed, this, &AWitchCharacter::MoveModeChange);
 }
 
 void AWitchCharacter::MoveForward(float Value)
@@ -143,6 +151,49 @@ void AWitchCharacter::UpdateMagicPoint(float ChangeMagicPoint)
 	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("HP : %f"), MagicPoint));
 }
 
+//Flying
+bool AWitchCharacter::GetMovingMode()
+{
+	return CharacterFlying;
+}
+
+void AWitchCharacter::FlyingChange()
+{
+	if (0.0f < MagicPoint)
+	{
+		CharacterFlying = true;
+
+		GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+
+		bUseControllerRotationPitch = true;
+	}
+}
+
+void AWitchCharacter::RunningChange()
+{
+	CharacterFlying = false;
+
+	GetCapsuleComponent()->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
+
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	bUseControllerRotationPitch = false;
+}
+
+void AWitchCharacter::MoveModeChange()
+{
+	if (bCanMoveChange)
+	{
+		if (CharacterFlying)
+		{
+			RunningChange();
+		}
+		else
+		{
+			FlyingChange();
+		}
+	}
+}
+
 //Camera Change
 void AWitchCharacter::MainCamera()
 {
@@ -154,20 +205,4 @@ void AWitchCharacter::SubCamera()
 {
 	SpringArmComp->TargetArmLength = -250.0f;
 	CameraComp->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));
-}
-
-void AWitchCharacter::MoveModeChange()
-{
-	if (GetCharacterMovement()->IsFlying())
-	{
-		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-
-		bUseControllerRotationPitch = false;
-	}
-	else if(GetCharacterMovement()->IsFalling() || GetCharacterMovement()->IsWalking())
-	{
-		GetCharacterMovement()->SetMovementMode(MOVE_Flying);
-
-		bUseControllerRotationPitch = true;
-	}
 }

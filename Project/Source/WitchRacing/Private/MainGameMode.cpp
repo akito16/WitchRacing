@@ -7,6 +7,12 @@
 
 AMainGameMode::AMainGameMode()
 {
+	/*static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/Blueprints/BP_WitchCharacter"));
+	if (PlayerPawnBPClass.Class != NULL)
+	{
+		DefaultPawnClass = PlayerPawnBPClass.Class;
+	}*/
+
 	Time = 0;
 	StartTime = 5;
 }
@@ -82,3 +88,4 @@ void AMainGameMode::NotMove()
 	Controller->SetIgnoreMoveInput(true);
 	Controller->SetIgnoreLookInput(true);
 }
+

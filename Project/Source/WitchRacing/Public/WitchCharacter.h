@@ -36,6 +36,20 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Timer")
 		int GoalTime;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+		bool CharacterFlying;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+		bool bCanMoveChange;
+
+	bool GetMovingMode();
+	
+	UFUNCTION(Category = "Movement")
+		void FlyingChange();
+
+	UFUNCTION(Category = "Movement")
+		void RunningChange();
+
 	UFUNCTION(Category = "Movement")
 		void MoveModeChange();
 

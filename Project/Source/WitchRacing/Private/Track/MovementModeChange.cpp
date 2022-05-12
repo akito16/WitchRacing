@@ -12,6 +12,7 @@
 AMovementModeChange::AMovementModeChange()
 {
     OverlapVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("OverlapVolume"));
+    OverlapVolume->InitBoxExtent(FVector(150.0f, 150.0f, 10.0f));
     RootComponent = OverlapVolume;
     OnActorBeginOverlap.AddDynamic(this, &AMovementModeChange::OverlapBegins);
 
@@ -27,6 +28,7 @@ void AMovementModeChange::OverlapBegins(AActor* MyOverlapActor, AActor* OtherAct
     if (OtherActor == MyCharacter)
     {
         AWitchCharacter* WitchCharacter = Cast<AWitchCharacter>(MyCharacter);
-        WitchCharacter->MoveModeChange();
+        WitchCharacter->UpdateMagicPoint(WitchCharacter->FullMagicPoint);
+        WitchCharacter->FlyingChange();
     }
 }

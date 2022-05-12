@@ -3,6 +3,8 @@
 
 #include "UI/InGameMainHUD.h"
 #include "Blueprint/UserWidget.h"
+#include "WitchCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 AInGameMainHUD::AInGameMainHUD()
 {
@@ -19,6 +21,9 @@ AInGameMainHUD::AInGameMainHUD()
 void AInGameMainHUD::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ACharacter* MyCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
+	AWitchCharacter* WitchCharacter = Cast<AWitchCharacter>(MyCharacter);
 
 	//Timer
 	if (InGameTimeClass != nullptr)

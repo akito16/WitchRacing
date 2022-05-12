@@ -55,6 +55,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Timer")
 		int MilliSeconds = 0;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CheckPoint")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CheckPoint")
 		int AllCheckPoint;
 };
