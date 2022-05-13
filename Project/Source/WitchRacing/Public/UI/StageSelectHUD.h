@@ -4,25 +4,25 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
-#include "TitleHUD.generated.h"
+#include "StageSelectHUD.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class WITCHRACING_API ATitleHUD : public AHUD
+class WITCHRACING_API AStageSelectHUD : public AHUD
 {
 	GENERATED_BODY()
 	
 public:
-	ATitleHUD();
+	AStageSelectHUD();
 
 	virtual void BeginPlay() override;
 
 protected:
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<class UUserWidget> TitleMenuClass;
+		TSubclassOf<class UUserWidget> StageSelectClass;
 
 	UPROPERTY(EditAnywhere)
-		class UUserWidget* TitleMenuWidget;
+		class UUserWidget* StageSelectWidget;
 };

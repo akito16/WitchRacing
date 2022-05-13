@@ -23,6 +23,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FName StageName;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+		class UImage* StageImage;
+
 protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		class UButton* StartStageBtn;

@@ -3,6 +3,7 @@
 
 #include "UI/StageSelect_StageBtn.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
 
 void UStageSelect_StageBtn::NativeConstruct()
@@ -13,6 +14,8 @@ void UStageSelect_StageBtn::NativeConstruct()
 	{
 		StartStageBtn->OnClicked.AddDynamic(this, &UStageSelect_StageBtn::StartStage);
 	}
+
+	StageNameText->SetText(FText::FromName(StageName));
 }
 
 void UStageSelect_StageBtn::StartStage()

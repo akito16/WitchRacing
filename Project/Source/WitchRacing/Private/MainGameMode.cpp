@@ -21,6 +21,9 @@ void AMainGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	APlayerController* Controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	Controller->SetInputMode(FInputModeGameOnly());
+
 	NotMove();
 	GetWorldTimerManager().SetTimer(StartTimerHandle, this, &AMainGameMode::StartCount, 1.0f, true);
 }
