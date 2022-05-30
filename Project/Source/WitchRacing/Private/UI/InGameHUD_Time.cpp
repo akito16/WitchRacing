@@ -11,7 +11,9 @@ void UInGameHUD_Time::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 	AMainGameMode* GameMode = Cast<AMainGameMode>(GetWorld()->GetAuthGameMode());
 
-	Minutes->SetText(FText::AsNumber(GameMode->Minutes));
-	Seconds->SetText(FText::AsNumber(GameMode->Seconds));
-	MilliSeconds->SetText(FText::AsNumber(GameMode->MilliSeconds));
+	int Minutes = GameMode->Minutes;
+	int Seconds = GameMode->Seconds;
+	int MilliSeconds = GameMode->MilliSeconds;
+	FString str = FString::Printf(TEXT("%02d:%02d:%02d"), Minutes, Seconds, MilliSeconds);
+	Time->SetText(FText::FromString(str));
 }

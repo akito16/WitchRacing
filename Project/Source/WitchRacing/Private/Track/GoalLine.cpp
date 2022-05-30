@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
+#include "Save/BestTimeSave.h"
 
 // Sets default values
 AGoalLine::AGoalLine()
@@ -27,6 +28,8 @@ void AGoalLine::GoalLineOverlap(AActor* MyOverlapActor, AActor* OtherActor)
     if (OtherActor == MyCharacter)
     {
         AWitchCharacter* WitchCharacter = Cast<AWitchCharacter>(MyCharacter);
+
+        //Clear Widget Add
         if (WitchCharacter->CheckPointCount == GameMode->AllCheckPoint)
         {
             GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("GOAL")));
@@ -42,6 +45,36 @@ void AGoalLine::GoalLineOverlap(AActor* MyOverlapActor, AActor* OtherActor)
 
                 GoalWidget = CreateWidget<UUserWidget>(GetWorld(), GoalClass);
                 GoalWidget->AddToViewport();
+            }
+        }
+
+        //Best Time Update
+        UBestTimeSave* SaveGameInstance = Cast<UBestTimeSave>
+            (UGameplayStatics::CreateSaveGameObject(UBestTimeSave::StaticClass()));
+        SaveGameInstance = Cast<UBestTimeSave>(UGameplayStatics::LoadGameFromSlot("SaveData", 0));
+        if (!IsValid(SaveGameInstance))
+        {
+            SaveGameInstance = Cast<UBestTimeSave>(UGameplayStatics::CreateSaveGameObject(UBestTimeSave::StaticClass()));
+            int index = 0;
+            FString NowMap = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
+            if (SaveGameInstance->StageNames.Find(FName(NowMap), index))
+            {
+                SaveGameInstance->BestTimes[index] = GameMode->Time;
+            }
+            UGameplayStatics::SaveGameToSlot(SaveGameInstance, TEXT("SaveData"), 0);
+        }
+        else
+        {
+            int index = 0;
+            FString NowMap = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
+            if (SaveGameInstance->StageNames.Find(FName(NowMap), index))
+            {
+                float BestTime = SaveGameInstance->BestTimes[index];
+                if (BestTime == 0 || GameMode->Time < BestTime)
+                {
+                    SaveGameInstance->BestTimes[index] = GameMode->Time;
+                    UGameplayStatics::SaveGameToSlot(SaveGameInstance, TEXT("SaveData"), 0);
+                }
             }
         }
     }

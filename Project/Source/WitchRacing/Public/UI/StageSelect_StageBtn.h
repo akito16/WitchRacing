@@ -18,10 +18,13 @@ public:
 	virtual void NativeConstruct() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UTexture2D* StagePhoto;
+		UTexture2D* StageTexture;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FName StageName;
+		FText StageName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FName LevelName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 		class UImage* StageImage;

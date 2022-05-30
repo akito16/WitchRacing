@@ -19,11 +19,5 @@ public:
 
 protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-		class UTextBlock* Minutes;
-
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-		class UTextBlock* Seconds;
-
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-		class UTextBlock* MilliSeconds;
+		class UTextBlock* Time;
 };

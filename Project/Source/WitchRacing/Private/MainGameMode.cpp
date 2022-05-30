@@ -32,8 +32,8 @@ void AMainGameMode::BeginPlay()
 void AMainGameMode::TimeMeasure()
 {
 	MilliSeconds = Time % 100;
-	Minutes = Time / 6000;
 	Seconds = (Time / 100) % 60;
+	Minutes = Time / 6000;
 	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("%02d : %02d : %02d"), Minutes, Seconds, MilliSeconds));
 	Time++;
 }
