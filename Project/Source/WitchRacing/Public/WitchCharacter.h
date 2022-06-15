@@ -42,6 +42,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 		bool bCanMoveChange;
 
+	UFUNCTION(Category = "Movement")
+		void BroomSpawn();
+
+	UFUNCTION(Category = "Movement")
+		void BroomDestroy();
+
 	bool GetMovingMode();
 	
 	UFUNCTION(Category = "Movement")
@@ -53,6 +59,7 @@ public:
 	UFUNCTION(Category = "Movement")
 		void MoveModeChange();
 
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -62,6 +69,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
 		class USpringArmComponent* SpringArmComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		TSubclassOf<class AActor> BroomClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		class AActor* BroomActor;
 
 public:	
 	// Called every frame

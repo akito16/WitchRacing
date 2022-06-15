@@ -5,6 +5,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/Actor.h"
 #include "Components/CapsuleComponent.h"
 #include "UI/InGameMainHUD.h"
 #include "Kismet/GameplayStatics.h"
@@ -51,8 +52,6 @@ AWitchCharacter::AWitchCharacter()
 
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	
 }
 
 // Called when the game starts or when spawned
@@ -151,6 +150,22 @@ void AWitchCharacter::UpdateMagicPoint(float ChangeMagicPoint)
 	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("HP : %f"), MagicPoint));
 }
 
+void AWitchCharacter::BroomSpawn()
+{
+	BroomClass = TSoftClassPtr<AActor>(FSoftClassPath(TEXT("/Game/Models/BP_Broom.BP_Broom_C"))).LoadSynchronous();
+	const FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false);
+	if (BroomClass != nullptr)
+	{
+		BroomActor = GetWorld()->SpawnActor<AActor>(BroomClass);
+		BroomActor->AttachToComponent(GetMesh(), AttachmentRules, "BroomPosition");
+	}
+}
+
+void AWitchCharacter::BroomDestroy()
+{
+	BroomActor->Destroy();
+}
+
 //Flying
 bool AWitchCharacter::GetMovingMode()
 {
@@ -162,6 +177,7 @@ void AWitchCharacter::FlyingChange()
 	if (0.0f < MagicPoint)
 	{
 		CharacterFlying = true;
+		BroomSpawn();
 
 		GetCharacterMovement()->SetMovementMode(MOVE_Flying);
 
@@ -172,6 +188,7 @@ void AWitchCharacter::FlyingChange()
 void AWitchCharacter::RunningChange()
 {
 	CharacterFlying = false;
+	BroomDestroy();
 
 	GetCapsuleComponent()->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
 
