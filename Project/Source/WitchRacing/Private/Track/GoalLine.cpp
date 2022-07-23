@@ -6,6 +6,7 @@
 #include "MainGameMode.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Save/BestTimeSave.h"
 
@@ -13,11 +14,16 @@
 AGoalLine::AGoalLine()
 {
     GoalLineVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("GoalLineVolume"));
+    GoalLineVolume->SetBoxExtent(FVector(150.0f, 150.0f, 300.0f));
     RootComponent = GoalLineVolume;
     OnActorBeginOverlap.AddDynamic(this, &AGoalLine::GoalLineOverlap);
 
     static ConstructorHelpers::FClassFinder<UUserWidget> Goal(TEXT("/Game/Blueprints/UI/UI_Goal"));
     GoalClass = Goal.Class;
+
+    GoalParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("GoalParticle"));
+    GoalParticle->SetRelativeLocation(FVector(0.0f, 0.0f, -300.0f));
+    GoalParticle->SetupAttachment(RootComponent);
 }
 
 void AGoalLine::GoalLineOverlap(AActor* MyOverlapActor, AActor* OtherActor)
@@ -30,22 +36,19 @@ void AGoalLine::GoalLineOverlap(AActor* MyOverlapActor, AActor* OtherActor)
         AWitchCharacter* WitchCharacter = Cast<AWitchCharacter>(MyCharacter);
 
         //Clear Widget Add
-        if (WitchCharacter->CheckPointCount == GameMode->AllCheckPoint)
+        //GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("GOAL")));
+        GetWorldTimerManager().ClearTimer(GameMode->TimerHandle);
+
+        if (GoalClass != nullptr)
         {
-            GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("GOAL")));
-            GetWorldTimerManager().ClearTimer(GameMode->TimerHandle);
+            APlayerController* Controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+            Controller->SetInputMode(FInputModeGameAndUI());
+            Controller->bShowMouseCursor = true;
+            Controller->SetIgnoreMoveInput(true);
+            Controller->SetIgnoreLookInput(true);
 
-            if (GoalClass != nullptr)
-            {
-                APlayerController* Controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-                Controller->SetInputMode(FInputModeUIOnly());
-                Controller->bShowMouseCursor = true;
-                Controller->SetIgnoreMoveInput(false);
-                Controller->SetIgnoreLookInput(false);
-
-                GoalWidget = CreateWidget<UUserWidget>(GetWorld(), GoalClass);
-                GoalWidget->AddToViewport();
-            }
+            GoalWidget = CreateWidget<UUserWidget>(GetWorld(), GoalClass);
+            GoalWidget->AddToViewport();
         }
 
         //Best Time Update

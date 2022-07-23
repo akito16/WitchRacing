@@ -23,6 +23,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		UBoxComponent* GoalLineVolume;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		class UParticleSystemComponent* GoalParticle;
+
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> GoalClass;
 

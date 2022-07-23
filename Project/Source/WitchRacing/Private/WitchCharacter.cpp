@@ -32,7 +32,7 @@ AWitchCharacter::AWitchCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
 	GetCharacterMovement()->MaxWalkSpeed = 900.0f;
-	GetCharacterMovement()->MaxFlySpeed = 900.0f;
+	GetCharacterMovement()->MaxFlySpeed = 1500.0f;
 	GetCharacterMovement()->JumpZVelocity = 600.0f;
 	GetCharacterMovement()->AirControl = 1.0f;
 
@@ -49,6 +49,10 @@ AWitchCharacter::AWitchCharacter()
 	SpringArmComp->TargetArmLength = 250.0f;
 	SpringArmComp->bUsePawnControlRotation = true;
 	SpringArmComp->bEnableCameraLag = false;
+
+	//Broom Setting
+	BroomClass = TSoftClassPtr<AActor>(FSoftClassPath(TEXT("/Game/Models/BP_Broom.BP_Broom_C"))).LoadSynchronous();
+	BroomActor = nullptr;
 
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -152,18 +156,21 @@ void AWitchCharacter::UpdateMagicPoint(float ChangeMagicPoint)
 
 void AWitchCharacter::BroomSpawn()
 {
-	BroomClass = TSoftClassPtr<AActor>(FSoftClassPath(TEXT("/Game/Models/BP_Broom.BP_Broom_C"))).LoadSynchronous();
 	const FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false);
 	if (BroomClass != nullptr)
 	{
-		BroomActor = GetWorld()->SpawnActor<AActor>(BroomClass);
-		BroomActor->AttachToComponent(GetMesh(), AttachmentRules, "BroomPosition");
+		if (BroomActor == nullptr)
+		{
+			BroomActor = GetWorld()->SpawnActor<AActor>(BroomClass);
+			BroomActor->AttachToComponent(GetMesh(), AttachmentRules, "BroomPosition");
+		}
 	}
 }
 
 void AWitchCharacter::BroomDestroy()
 {
 	BroomActor->Destroy();
+	BroomActor = nullptr;
 }
 
 //Flying
@@ -188,7 +195,6 @@ void AWitchCharacter::FlyingChange()
 void AWitchCharacter::RunningChange()
 {
 	CharacterFlying = false;
-	BroomDestroy();
 
 	GetCapsuleComponent()->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
 
@@ -203,6 +209,7 @@ void AWitchCharacter::MoveModeChange()
 		if (CharacterFlying)
 		{
 			RunningChange();
+			BroomDestroy();
 		}
 		else
 		{

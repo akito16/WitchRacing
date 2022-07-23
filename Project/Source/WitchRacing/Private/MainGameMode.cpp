@@ -78,6 +78,7 @@ void AMainGameMode::StartCount()
 	}
 }
 
+
 void AMainGameMode::CanMove()
 {
 	APlayerController* Controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
