@@ -102,10 +102,13 @@ void AWitchCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 	PlayerInputComponent->BindAction("BackMirror", IE_Pressed, this, &AWitchCharacter::SubCamera);
 	PlayerInputComponent->BindAction("BackMirror", IE_Released, this, &AWitchCharacter::MainCamera);
+	PlayerInputComponent->BindAction("Overlook", IE_Pressed, this, &AWitchCharacter::OverlookCameraOn);
+	PlayerInputComponent->BindAction("Overlook", IE_Released, this, &AWitchCharacter::OverlookCameraOff);
 
 	PlayerInputComponent->BindAction("Fly", IE_Pressed, this, &AWitchCharacter::MoveModeChange);
 }
 
+/*------Moving-----------------------------------------------------*/
 void AWitchCharacter::MoveForward(float Value)
 {
 	if ((Controller != nullptr) && (Value != 0.0f))
@@ -140,7 +143,7 @@ void AWitchCharacter::StopJump()
 	bPressedJump = false;
 }
 
-//MagicPoint
+/*------MagicPoint-------------------------------------------------*/
 float AWitchCharacter::GetMagicPoint()
 {
 	return MagicPointPercentage;
@@ -173,7 +176,7 @@ void AWitchCharacter::BroomDestroy()
 	BroomActor = nullptr;
 }
 
-//Flying
+/*------Flying-----------------------------------------------------*/
 bool AWitchCharacter::GetMovingMode()
 {
 	return CharacterFlying;
@@ -218,7 +221,7 @@ void AWitchCharacter::MoveModeChange()
 	}
 }
 
-//Camera Change
+/*------Camera Change----------------------------------------------*/
 void AWitchCharacter::MainCamera()
 {
 	SpringArmComp->TargetArmLength = 250.0f;
@@ -229,4 +232,14 @@ void AWitchCharacter::SubCamera()
 {
 	SpringArmComp->TargetArmLength = -250.0f;
 	CameraComp->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));
+}
+
+void AWitchCharacter::OverlookCameraOn()
+{
+	bUseControllerRotationYaw = false;
+}
+
+void AWitchCharacter::OverlookCameraOff()
+{
+	bUseControllerRotationYaw = true;
 }

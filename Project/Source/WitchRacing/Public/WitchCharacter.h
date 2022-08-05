@@ -48,7 +48,8 @@ public:
 	UFUNCTION(Category = "Movement")
 		void BroomDestroy();
 
-	bool GetMovingMode();
+	UFUNCTION(BlueprintPure, Category = "Movement")
+		bool GetMovingMode();
 	
 	UFUNCTION(Category = "Movement")
 		void FlyingChange();
@@ -95,4 +96,6 @@ protected:
 	void MainCamera();
 	void SubCamera();
 
+	void OverlookCameraOn();
+	void OverlookCameraOff();
 };
